@@ -1,4 +1,4 @@
 from langchain_groq import ChatGroq
 from config import config
 
-llm = ChatGroq(model="llama-3.3-70b-versatile", api_key=config.GROQ_API_KEY)
+llm = ChatGroq(model="meta-llama/llama-4-scout-17b-16e-instruct", api_key=config.GROQ_API_KEY)

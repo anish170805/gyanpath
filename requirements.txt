@@ -15,3 +15,4 @@ langchain-exa
 yt-dlp
 trafilatura
 newspaper3k
+fastapi
