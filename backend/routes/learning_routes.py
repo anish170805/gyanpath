@@ -49,14 +49,7 @@ from typing import Any, Dict, List, Optional
 
 from fastapi import APIRouter, HTTPException
 
-# ── path setup ──────────────────────────────────────────────
-_BACKEND = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-_ROOT    = os.path.abspath(os.path.join(_BACKEND, ".."))
-for p in (_BACKEND, _ROOT):
-    if p not in sys.path:
-        sys.path.insert(0, p)
-
-from models.schemas import (
+from backend.models.schemas import (
     StartRequest, StartResponse,
     RoadmapEditRequest, RoadmapEditResponse,
     NextRequest, NextResponse,
@@ -67,12 +60,12 @@ from models.schemas import (
     SessionStatusResponse,
     ResourceSchema, QuizQuestionSchema,
 )
-from agent.runner import run_until_interrupt, resume_until_interrupt, resume_capturing_nodes, inject_state, AgentInterrupt
-from agent.session_store import (
+from backend.agent.runner import run_until_interrupt, resume_until_interrupt, resume_capturing_nodes, inject_state, AgentInterrupt
+from backend.agent.session_store import (
     create_session, get_session, update_state,
     set_phase, get_phase, session_exists, delete_session,
 )
-from states import State
+from backend.agent.states import State
 
 router = APIRouter()
 

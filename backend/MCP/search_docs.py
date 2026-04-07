@@ -3,7 +3,7 @@
 import os
 from dotenv import load_dotenv
 from typing import List, Dict
-from config import config   
+from backend.config import config   
 from fastmcp import FastMCP
 from langchain_exa import ExaSearchRetriever
 

@@ -6,11 +6,11 @@ from bs4 import BeautifulSoup
 
 from langgraph.types import interrupt
 
-from MCP.research.search_docs import search_docs
-from MCP.research.youtube_tools import youtube_search, youtube_transcript
+from backend.MCP.search_docs import search_docs
+from backend.MCP.youtube_tools import youtube_search, youtube_transcript
 
-from states import State, Roadmap, Task, Resource, FetchedContent, QuizQuestion
-from utils.llm import llm
+from backend.agent.states import State, Roadmap, Task, Resource, FetchedContent, QuizQuestion
+from backend.utils.llm import llm
 
 
 # ============================================================

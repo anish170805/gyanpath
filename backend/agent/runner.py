@@ -36,13 +36,8 @@ import os
 from dataclasses import dataclass, field
 from typing import Any, Dict, Optional
 
-# ── make sure the repo root is on the path ──────────────────
-_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
-if _ROOT not in sys.path:
-    sys.path.insert(0, _ROOT)
-
-from graph import graph          # the compiled LangGraph graph
-from states import State         # pydantic State model
+from backend.agent.graph import graph          # the compiled LangGraph graph
+from backend.agent.states import State         # pydantic State model
 
 
 @dataclass

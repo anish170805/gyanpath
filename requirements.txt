@@ -2,13 +2,11 @@ langchain
 langchain-groq
 pydantic
 langgraph
-uuid
-typing
 python-dotenv
 fastmcp
-bs4
+beautifulsoup4
 httpx
-readability
+readability-lxml
 youtube-search-python
 youtube-transcript-api
 langchain-exa
@@ -16,3 +14,6 @@ yt-dlp
 trafilatura
 newspaper3k
 fastapi
+uvicorn
+gunicorn
+python-multipart

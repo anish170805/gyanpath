@@ -211,9 +211,11 @@ function ProjectCard({
         <span className="font-headline font-bold text-lg text-primary">Your Challenge Project</span>
       </div>
       <div className="w-full glass-panel rounded-xl p-6 border border-primary/10 space-y-4">
-        <pre className="text-sm text-on-surface whitespace-pre-wrap leading-relaxed font-body">
-          {brief}
-        </pre>
+        <div className="text-sm text-on-surface leading-relaxed font-body prose prose-invert prose-primary max-w-none">
+          <ReactMarkdown>
+            {brief}
+          </ReactMarkdown>
+        </div>
         <button
           onClick={onNext}
           className="w-full py-3 rounded-xl bg-primary text-on-primary font-bold text-sm hover:brightness-110 transition-all flex items-center justify-center gap-2"

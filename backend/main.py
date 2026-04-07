@@ -10,16 +10,6 @@ The backend directory sits alongside the existing agent files
 the repo-root sys.path insertion in runner.py.
 """
 
-import sys
-import os
-
-# Ensure the repo root (gyanpath/) is on sys.path so that
-# "from graph import graph" and "from states import State" work
-# regardless of how uvicorn is launched.
-_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-if _ROOT not in sys.path:
-    sys.path.insert(0, _ROOT)
-
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
