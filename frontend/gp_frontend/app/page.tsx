@@ -241,69 +241,173 @@ function RoadmapReviewCard({
   onDelete: (index: number) => void;
   onConfirm: () => void;
 }) {
+  const [editingIndex, setEditingIndex] = useState<number | null>(null);
+  const [editText, setEditText] = useState("");
+  const [isAdding, setIsAdding] = useState(false);
+  const [newTaskText, setNewTaskText] = useState("");
+  const [deletingIndex, setDeletingIndex] = useState<number | null>(null);
+
+  const handleEditStart = (index: number, task: string) => {
+    setEditingIndex(index);
+    setEditText(task);
+    setDeletingIndex(null);
+  };
+
+  const handleEditSave = () => {
+    if (editingIndex !== null && editText.trim()) {
+      onEdit(editingIndex, editText.trim());
+      setEditingIndex(null);
+      setEditText("");
+    }
+  };
+
+  const handleAddSave = () => {
+    if (newTaskText.trim()) {
+      onAdd(newTaskText.trim());
+      setIsAdding(false);
+      setNewTaskText("");
+    }
+  };
+
   return (
-    <div className="flex flex-col items-start gap-4 w-full">
+    <div className="flex flex-col items-start gap-4 w-full animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div className="flex items-center gap-3">
-        <div className="w-8 h-8 rounded-lg bg-primary/20 flex items-center justify-center text-primary">
-          <Icon name="list_alt" className="text-lg" />
+        <div className="w-10 h-10 rounded-xl bg-primary/20 flex items-center justify-center text-primary shadow-sm shadow-primary/10">
+          <Icon name="list_alt" className="text-xl" />
         </div>
-        <span className="font-headline font-bold text-lg text-primary">Review Your Roadmap</span>
+        <div>
+          <span className="font-headline font-bold text-xl text-on-surface tracking-tight">Review Your Roadmap</span>
+          <p className="text-xs text-on-surface-variant font-medium opacity-70">Customised learning path for you</p>
+        </div>
       </div>
-      <p className="text-sm text-on-surface-variant mb-2">
-        I've created a custom learning path for you. You can add, edit, or remove topics before we begin.
-      </p>
       
-      <div className="w-full bg-surface-container rounded-xl border border-outline-variant/10 overflow-hidden">
-        {roadmap.map((task, i) => (
-          <div key={i} className="flex items-center justify-between p-4 border-b border-outline-variant/5 last:border-b-0 group">
-            <div className="flex items-center gap-3 flex-1">
-              <span className="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center text-xs font-bold text-on-surface-variant shrink-0">
-                {i + 1}
+      <div className="w-full bg-surface-container/50 backdrop-blur-sm rounded-2xl border border-outline-variant/10 overflow-hidden shadow-xl">
+        <div className="p-1">
+          {roadmap.map((task, i) => (
+            <div key={i} className="flex items-center justify-between p-3.5 border-b border-outline-variant/5 last:border-b-0 group hover:bg-surface-container-high/40 transition-colors rounded-xl mx-1 my-0.5">
+              <div className="flex items-center gap-4 flex-1">
+                <span className="w-7 h-7 rounded-lg bg-surface-container-highest flex items-center justify-center text-xs font-bold text-primary shrink-0 border border-outline-variant/10">
+                  {i + 1}
+                </span>
+                
+                {editingIndex === i ? (
+                  <div className="flex-1 flex gap-2">
+                    <input
+                      autoFocus
+                      className="flex-1 bg-surface-container-highest border border-primary/30 rounded-lg px-3 py-1.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/40"
+                      value={editText}
+                      onChange={(e) => setEditText(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") handleEditSave();
+                        if (e.key === "Escape") setEditingIndex(null);
+                      }}
+                    />
+                    <button onClick={handleEditSave} className="p-1.5 text-secondary hover:bg-secondary/10 rounded-lg transition-colors">
+                      <Icon name="check" className="text-sm" />
+                    </button>
+                    <button onClick={() => setEditingIndex(null)} className="p-1.5 text-on-surface-variant hover:bg-surface-container-highest rounded-lg transition-colors">
+                      <Icon name="close" className="text-sm" />
+                    </button>
+                  </div>
+                ) : (
+                  <span className="text-sm text-on-surface font-medium leading-relaxed">{task}</span>
+                )}
+              </div>
+
+              {editingIndex !== i && (
+                <div className="flex items-center gap-1.5 ml-2">
+                  {deletingIndex === i ? (
+                    <div className="flex items-center gap-2 bg-error/10 p-1 rounded-lg border border-error/20 animate-in fade-in zoom-in-95 duration-200">
+                      <span className="text-[10px] font-bold text-error px-1 uppercase tracking-wider">Confirm?</span>
+                      <button 
+                        onClick={() => { onDelete(i); setDeletingIndex(null); }}
+                        className="p-1 text-on-error-container bg-error/20 hover:bg-error/30 rounded-md transition-colors"
+                        title="Yes, Delete"
+                      >
+                        <Icon name="check" className="text-xs" />
+                      </button>
+                      <button 
+                        onClick={() => setDeletingIndex(null)}
+                        className="p-1 text-on-surface-variant hover:bg-surface-container-highest rounded-md transition-colors"
+                        title="Cancel"
+                      >
+                        <Icon name="close" className="text-xs" />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-all transform translate-x-2 group-hover:translate-x-0">
+                      <button 
+                        onClick={() => handleEditStart(i, task)}
+                        className="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-full transition-all"
+                        title="Edit Task"
+                      >
+                        <Icon name="edit" className="text-sm" />
+                      </button>
+                      <button 
+                        onClick={() => { setDeletingIndex(i); setEditingIndex(null); }}
+                        className="p-2 text-on-surface-variant hover:text-error hover:bg-error/10 rounded-full transition-all"
+                        title="Delete Task"
+                      >
+                        <Icon name="delete" className="text-sm" />
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          ))}
+
+          {isAdding ? (
+            <div className="p-3.5 mx-1 my-0.5 bg-primary/5 rounded-xl border border-primary/20 flex gap-3 items-center animate-in slide-in-from-top-2 duration-300">
+              <span className="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center text-xs font-bold text-primary shrink-0">
+                +
               </span>
-              <span className="text-sm text-on-surface font-medium">{task}</span>
-            </div>
-            <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              <button 
-                onClick={() => {
-                  const newTask = window.prompt("Edit task:", task);
-                  if (newTask && newTask.trim() !== task) onEdit(i, newTask.trim());
+              <input
+                autoFocus
+                className="flex-1 bg-surface-container-highest border border-primary/30 rounded-lg px-3 py-1.5 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary/40"
+                placeholder="Task description..."
+                value={newTaskText}
+                onChange={(e) => setNewTaskText(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") handleAddSave();
+                  if (e.key === "Escape") setIsAdding(false);
                 }}
-                className="p-2 text-on-surface-variant hover:text-primary hover:bg-primary/10 rounded-full transition-colors"
-                title="Edit Task"
+              />
+              <button 
+                onClick={handleAddSave}
+                disabled={!newTaskText.trim()}
+                className="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors disabled:opacity-30"
               >
-                <Icon name="edit" className="text-sm" />
+                <Icon name="check" className="text-sm" />
               </button>
               <button 
-                onClick={() => {
-                  if (window.confirm("Delete this task?")) onDelete(i);
-                }}
-                className="p-2 text-on-surface-variant hover:text-error hover:bg-error/10 rounded-full transition-colors"
-                title="Delete Task"
+                onClick={() => setIsAdding(false)}
+                className="p-2 text-on-surface-variant hover:bg-surface-container-highest rounded-lg transition-colors"
               >
-                <Icon name="delete" className="text-sm" />
+                <Icon name="close" className="text-sm" />
               </button>
             </div>
-          </div>
-        ))}
+          ) : (
+            <button
+              onClick={() => { setIsAdding(true); setEditingIndex(null); setDeletingIndex(null); }}
+              className="w-full p-4 flex items-center justify-center gap-2 text-sm font-bold text-on-surface-variant hover:text-primary hover:bg-primary/5 transition-all group"
+            >
+              <div className="w-5 h-5 rounded-full border-2 border-dashed border-on-surface-variant/30 flex items-center justify-center group-hover:border-primary/50 transition-colors">
+                <Icon name="add" className="text-xs" />
+              </div>
+              Add Another Topic
+            </button>
+          )}
+        </div>
       </div>
       
-      <div className="w-full flex flex-col sm:flex-row gap-3 mt-4">
-        <button
-          onClick={() => {
-            const newTask = window.prompt("Enter new task description:");
-            if (newTask && newTask.trim()) onAdd(newTask.trim());
-          }}
-          className="flex-1 py-3 rounded-xl border-2 border-dashed border-outline-variant/30 text-on-surface-variant font-bold text-sm hover:border-primary/50 hover:text-primary hover:bg-primary/5 transition-all flex items-center justify-center gap-2"
-        >
-          <Icon name="add" className="text-sm" />
-          Add Task
-        </button>
+      <div className="w-full flex flex-col sm:flex-row gap-4 mt-2">
         <button
           onClick={onConfirm}
-          className="flex-1 py-3 rounded-xl bg-primary text-on-primary font-bold text-sm hover:brightness-110 transition-all shadow-md shadow-primary/20 flex items-center justify-center gap-2"
+          className="flex-1 py-4 rounded-2xl bg-primary text-on-primary font-bold text-base hover:brightness-110 active:scale-[0.98] transition-all shadow-lg shadow-primary/30 flex items-center justify-center gap-3 group"
         >
           Confirm & Start Learning
-          <Icon name="check_circle" className="text-sm" />
+          <Icon name="rocket_launch" className="text-xl group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
         </button>
       </div>
     </div>
