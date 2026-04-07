@@ -1,6 +1,6 @@
 # 🎓 GyanPath — AI Learning Agent
 
-[![Logo](frontend/gp_frontend/public/GyanPath.jpeg)](https://github.com/anish170805/gyanpath)
+![Logo](frontend/public/GyanPath.jpeg)
 
 **GyanPath** is a state-of-the-art AI-driven learning platform that bridges the gap between passive reading and active learning. Built on top of **LangGraph** and **FastAPI**, it orchestrates a sophisticated multi-step learning agent that creates personalized roadmaps, fetches real-world resources, conducts interactive quizzes, and challenges users with project briefs.
 
@@ -26,7 +26,7 @@ graph LR
 
     subgraph Intelligence [AI & Tools]
         LG[LangGraph Agent]
-        LLM[Groq / Llama 4]
+        LLM[Groq / Llama 3]
         Tools[Exa Search / YouTube Tools]
     end
 
@@ -87,9 +87,9 @@ stateDiagram-v2
 ## 🛠 Tech Stack
 
 - **Frontend**: Next.js 15, React, Tailwind CSS, Lucide Icons, Framer Motion.
-- **Backend API**: FastAPI, Uvicorn, Pydantic.
+- **Backend API**: FastAPI, Gunicorn, Uvicorn, Pydantic.
 - **AI Orchestration**: LangGraph, LangChain.
-- **LLM**: Groq (Llama-4-Scout).
+- **LLM**: Groq (Llama-3.1-70B).
 - **Search Tools**: Exa.ai, YouTube Transcript API.
 
 ---
@@ -111,11 +111,11 @@ cd gyanpath
 python -m venv venv
 source venv/bin/activate  # Windows: venv\Scripts\activate
 
-# Install dependencies
+# Install dependencies (from root)
 pip install -r requirements.txt
 
 # Configure environment variables
-# Create a .env file with:
+# Create a .env file in the root with:
 # GROQ_API_KEY=your_key
 # EXA_API_KEY=your_key
 
@@ -125,7 +125,7 @@ python -m uvicorn backend.main:app --host 0.0.0.0 --port 8000
 
 ### 3. Frontend Setup
 ```bash
-cd frontend/gp_frontend
+cd frontend
 
 # Install dependencies
 npm install
@@ -142,17 +142,26 @@ Visit **`http://localhost:3000`** to start learning!
 
 ```text
 gyanpath/
-├── backend/            # FastAPI Application
+├── backend/            # FastAPI Application & AI Logic
+│   ├── agent/          # LangGraph (graph, nodes, states)
 │   ├── routes/         # API Endpoint Handlers
-│   ├── agent/          # Graph Execution Logic
-│   └── models/         # Pydantic Schemas
+│   ├── models/         # Pydantic Schemas
+│   ├── MCP/            # External Tool Integrations
+│   └── main.py         # FastAPI Entry Point
 ├── frontend/           # Next.js Application
-│   ├── components/     # UI Design System
-│   └── hooks/          # Session State Management
-├── graph.py            # LangGraph Definition
-├── nodes.py            # Agent Logic per Node
-└── states.py           # Shared State Models
+│   ├── app/            # Application Router & Components
+│   ├── public/         # Static Assets & Logo
+│   └── lib/            # Typed API Client
+├── Procfile            # Deployment Configuration (Render/Heroku)
+└── requirements.txt    # Python Dependencies
 ```
+
+---
+
+## 📄 License
+
+GyanPath is open-source. Feel free to fork and build your own learning agents!
+
 
 ---
 
