@@ -37,7 +37,8 @@ app.add_middleware(
     allow_origins=[
         "http://localhost:3000",    # Next.js dev
         "http://127.0.0.1:3000",
-        "https://gyanpath.onrender.com"
+        "https://gyanpath.onrender.com",
+        "https://gyanpath-five.vercel.app/"
     ],
     allow_credentials=True,
     allow_methods=["*"],
