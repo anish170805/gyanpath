@@ -97,10 +97,22 @@ def roadmap_node(state: State) -> dict:
     8. Deploying LangGraph Agents
 
     Now generate the roadmap for: {state.topic}
+
+    Respond ONLY with a valid JSON object:
+    {{
+        "tasks": ["Task 1", "Task 2", "Task 3", ...]
+    }}
     """
 
-    roadmap_llm = llm.with_structured_output(Roadmap)
-    tasks = roadmap_to_tasks(roadmap_llm.invoke(prompt))
+    response = llm.invoke(prompt)
+    raw = response.content.strip().replace("```json", "").replace("```", "").strip()
+    
+    try:
+        data = json.loads(raw)
+        tasks = roadmap_to_tasks(Roadmap(tasks=data.get("tasks", [])))
+    except Exception as e:
+        print(f"[roadmap_node] JSON parse failed ({e}), using fallback.")
+        tasks = [Task(title=f"Learn {state.topic} Basics"), Task(title=f"Advanced {state.topic}")]
 
     print(f"[roadmap_node] Generated {len(tasks)} tasks:")
     for i, t in enumerate(tasks):
