@@ -1,0 +1,308 @@
+{
+  "metadata": {
+    "project": "GyanPath",
+    "description": "AI-powered learning agent with LangGraph backend and Next.js frontend",
+    "generated": "2026-08-23",
+    "excluded_paths": ["node_modules", "venv", "__pycache__", ".git", ".next"]
+  },
+  "files": [
+    {
+      "path": "backend/config.py",
+      "type": "config",
+      "description": "Loads environment variables (GROQ_API_KEY, EXA_API_KEY) and exposes Config singleton",
+      "imports": ["dotenv", "os"],
+      "imported_by": ["backend/MCP/search_docs.py", "backend/utils/llm.py"]
+    },
+    {
+      "path": "backend/main.py",
+      "type": "entrypoint",
+      "description": "FastAPI application entry point; sets up CORS, includes learning routes, health endpoint",
+      "imports": ["fastapi", "fastapi.middleware.cors", "backend.routes.learning_routes"],
+      "imported_by": []
+    },
+    {
+      "path": "backend/agent/__init__.py",
+      "type": "module_init",
+      "description": "Re-exports runner functions (run_until_interrupt, resume_until_interrupt, AgentInterrupt) for clean imports",
+      "imports": [".runner"],
+      "imported_by": ["backend/routes/learning_routes.py"]
+    },
+    {
+      "path": "backend/agent/states.py",
+      "type": "models",
+      "description": "Pydantic models for LangGraph state: Resource, FetchedContent, Task, Roadmap, QuizQuestion, State",
+      "imports": ["pydantic", "typing"],
+      "imported_by": [
+        "backend/agent/graph.py",
+        "backend/agent/nodes.py",
+        "backend/agent/runner.py",
+        "backend/routes/learning_routes.py"
+      ]
+    },
+    {
+      "path": "backend/agent/graph.py",
+      "type": "graph",
+      "description": "LangGraph StateGraph definition; wires all nodes and conditional edges for the learning flow",
+      "imports": [
+        "langgraph.graph",
+        "langgraph.checkpoint.memory",
+        "backend.agent.states",
+        "backend.agent.nodes"
+      ],
+      "imported_by": ["backend/agent/runner.py"]
+    },
+    {
+      "path": "backend/agent/nodes.py",
+      "type": "nodes",
+      "description": "All LangGraph node implementations: roadmap, resource fetching, research, explain, quiz, challenge, project, progress, and routers",
+      "imports": [
+        "asyncio", "json", "re", "requests", "bs4",
+        "langgraph.types",
+        "backend.MCP.search_docs",
+        "backend.MCP.youtube_tools",
+        "backend.agent.states",
+        "backend.utils.llm"
+      ],
+      "imported_by": ["backend/agent/graph.py"]
+    },
+    {
+      "path": "backend/agent/runner.py",
+      "type": "runner",
+      "description": "Async wrappers around compiled LangGraph graph; handles streaming, interrupts, state injection, and node output capture",
+      "imports": [
+        "sys", "os", "dataclasses", "typing",
+        "backend.agent.graph",
+        "backend.agent.states"
+      ],
+      "imported_by": ["backend/agent/__init__.py", "backend/routes/learning_routes.py"]
+    },
+    {
+      "path": "backend/agent/session_store.py",
+      "type": "storage",
+      "description": "In-memory session registry mapping session_id to {state, phase}; thread-safe for single-worker uvicorn",
+      "imports": ["typing"],
+      "imported_by": ["backend/routes/learning_routes.py"]
+    },
+    {
+      "path": "backend/MCP/search_docs.py",
+      "type": "mcp_tool",
+      "description": "FastMCP tool using ExaSearchRetriever (langchain_exa) to search documentation; exposes search_docs(query)",
+      "imports": ["os", "dotenv", "typing", "backend.config", "fastmcp", "langchain_exa"],
+      "imported_by": ["backend/MCP/server.py", "backend/agent/nodes.py"]
+    },
+    {
+      "path": "backend/MCP/youtube_tools.py",
+      "type": "mcp_tool",
+      "description": "FastMCP tools for YouTube search (yt_dlp) and transcript fetching (youtube_transcript_api)",
+      "imports": ["re", "yt_dlp", "fastmcp", "youtubesearchpython", "youtube_transcript_api"],
+      "imported_by": ["backend/MCP/server.py", "backend/agent/nodes.py"]
+    },
+    {
+      "path": "backend/MCP/server.py",
+      "type": "mcp_server",
+      "description": "Aggregates all MCP tools (search_docs, youtube_search, youtube_transcript) into single FastMCP server",
+      "imports": ["fastmcp", "MCP.research.youtube_tools", "MCP.research.search_docs"],
+      "imported_by": []
+    },
+    {
+      "path": "backend/models/schemas.py",
+      "type": "schemas",
+      "description": "Pydantic request/response schemas for all API endpoints (Start, RoadmapEdit, Next, Quiz, Challenge, Resources, SessionStatus)",
+      "imports": ["typing", "pydantic"],
+      "imported_by": ["backend/routes/learning_routes.py", "frontend/app/lib/api.ts"]
+    },
+    {
+      "path": "backend/routes/learning_routes.py",
+      "type": "routes",
+      "description": "All HTTP endpoints (/start, /roadmap/edit, /next, /quiz/start, /quiz/submit, /challenge, /resources, /session); orchestrates graph execution via runner and session_store",
+      "imports": [
+        "fastapi", "uuid", "re", "typing",
+        "backend.models.schemas",
+        "backend.agent.runner",
+        "backend.agent.session_store",
+        "backend.agent.states"
+      ],
+      "imported_by": ["backend/main.py"]
+    },
+    {
+      "path": "backend/utils/llm.py",
+      "type": "utils",
+      "description": "Initializes ChatGroq LLM (meta-llama/llama-4-scout-17b-16e-instruct) using config.GROQ_API_KEY",
+      "imports": ["langchain_groq", "backend.config"],
+      "imported_by": ["backend/agent/nodes.py"]
+    },
+    {
+      "path": "frontend/package.json",
+      "type": "config",
+      "description": "Next.js 16.2.2 project config with React 19, Tailwind CSS 4, react-markdown, ESLint",
+      "imports": [],
+      "imported_by": []
+    },
+    {
+      "path": "frontend/tsconfig.json",
+      "type": "config",
+      "description": "TypeScript config with strict mode, path aliases (@/*), Next.js plugin",
+      "imports": [],
+      "imported_by": []
+    },
+    {
+      "path": "frontend/next.config.ts",
+      "type": "config",
+      "description": "Minimal Next.js config",
+      "imports": ["next"],
+      "imported_by": []
+    },
+    {
+      "path": "frontend/app/layout.tsx",
+      "type": "layout",
+      "description": "Root layout with Inter/Manrope fonts, Material Symbols, dark theme, global CSS",
+      "imports": ["next/font/google", "./globals.css"],
+      "imported_by": []
+    },
+    {
+      "path": "frontend/app/page.tsx",
+      "type": "page",
+      "description": "Main client component; orchestrates all UI phases (idle, roadmap, lesson, quiz, evaluation, project, finished) using useLearningSession hook",
+      "imports": [
+        "react",
+        "./components/Sidebar",
+        "./components/TopNavBar",
+        "./components/ResourcePanel",
+        "./components/BottomInputBar",
+        "./components/ChatMessage",
+        "./components/LessonCard",
+        "./components/QuizCard",
+        "./components/Icon",
+        "./hooks/useLearningSession",
+        "react-markdown"
+      ],
+      "imported_by": []
+    },
+    {
+      "path": "frontend/app/lib/api.ts",
+      "type": "api_client",
+      "description": "Typed fetch wrappers for all backend endpoints mirroring Pydantic schemas; BASE_URL from NEXT_PUBLIC_API_URL",
+      "imports": [],
+      "imported_by": ["frontend/app/hooks/useLearningSession.ts"]
+    },
+    {
+      "path": "frontend/app/hooks/useLearningSession.ts",
+      "type": "hook",
+      "description": "Central state machine (reducer) for all learning flow phases; exposes actions (startSession, modifyRoadmap, confirmRoadmap, goNextLesson, beginQuiz, setAnswer, submitQuiz, resolveChallenge, continueAfterProject)",
+      "imports": ["react", "../lib/api"],
+      "imported_by": ["frontend/app/page.tsx"]
+    },
+    {
+      "path": "frontend/app/components/Sidebar.tsx",
+      "type": "component",
+      "description": "Collapsible sidebar showing roadmap progress, current task highlight, progress percentage",
+      "imports": ["react", "../lib/api"],
+      "imported_by": ["frontend/app/page.tsx"]
+    },
+    {
+      "path": "frontend/app/components/TopNavBar.tsx",
+      "type": "component",
+      "description": "Top navigation with menu toggle, resource panel toggle, session info",
+      "imports": ["react"],
+      "imported_by": ["frontend/app/page.tsx"]
+    },
+    {
+      "path": "frontend/app/components/ResourcePanel.tsx",
+      "type": "component",
+      "description": "Right-side panel displaying resources for current task (title, type, timestamps, reason)",
+      "imports": ["react", "./ResourceCard"],
+      "imported_by": ["frontend/app/page.tsx"]
+    },
+    {
+      "path": "frontend/app/components/ResourceCard.tsx",
+      "type": "component",
+      "description": "Individual resource display with link, type badge, video timestamps",
+      "imports": ["react"],
+      "imported_by": ["frontend/app/components/ResourcePanel.tsx"]
+    },
+    {
+      "path": "frontend/app/components/BottomInputBar.tsx",
+      "type": "component",
+      "description": "Bottom action bar during lesson/quiz phases: Take Quiz / Next Lesson buttons",
+      "imports": ["react"],
+      "imported_by": ["frontend/app/page.tsx"]
+    },
+    {
+      "path": "frontend/app/components/ChatMessage.tsx",
+      "type": "component",
+      "description": "Chat bubble component for user/assistant messages",
+      "imports": ["react"],
+      "imported_by": ["frontend/app/page.tsx"]
+    },
+    {
+      "path": "frontend/app/components/LessonCard.tsx",
+      "type": "component",
+      "description": "Formatted lesson display with title, tags, code snippet, key takeaway, markdown content",
+      "imports": ["react", "react-markdown"],
+      "imported_by": ["frontend/app/page.tsx"]
+    },
+    {
+      "path": "frontend/app/components/QuizCard.tsx",
+      "type": "component",
+      "description": "Quiz display component (defined but not directly used; page.tsx has inline AnswerForm/EvaluationCard)",
+      "imports": ["react"],
+      "imported_by": []
+    },
+    {
+      "path": "frontend/app/components/Icon.tsx",
+      "type": "component",
+      "description": "Wrapper for Material Symbols Outlined icons",
+      "imports": ["react"],
+      "imported_by": [
+        "frontend/app/page.tsx",
+        "frontend/app/components/Sidebar.tsx",
+        "frontend/app/components/TopNavBar.tsx",
+        "frontend/app/components/BottomInputBar.tsx",
+        "frontend/app/components/ResourceCard.tsx",
+        "frontend/app/components/ResourcePanel.tsx"
+      ]
+    },
+    {
+      "path": "frontend/app/components/ProgressBar.tsx",
+      "type": "component",
+      "description": "Progress bar component (defined but not directly used)",
+      "imports": ["react"],
+      "imported_by": []
+    }
+  ],
+  "dependency_graph": {
+    "backend_entrypoints": ["backend/main.py"],
+    "backend_core_flow": [
+      "backend/main.py",
+      "backend/routes/learning_routes.py",
+      "backend/agent/runner.py",
+      "backend/agent/graph.py",
+      "backend/agent/nodes.py",
+      "backend/agent/states.py"
+    ],
+    "backend_mcp_tools": [
+      "backend/MCP/search_docs.py",
+      "backend/MCP/youtube_tools.py",
+      "backend/MCP/server.py"
+    ],
+    "frontend_entrypoints": ["frontend/app/page.tsx", "frontend/app/layout.tsx"],
+    "frontend_core_flow": [
+      "frontend/app/page.tsx",
+      "frontend/app/hooks/useLearningSession.ts",
+      "frontend/app/lib/api.ts",
+      "backend/routes/learning_routes.py"
+    ],
+    "shared_schemas": [
+      "backend/models/schemas.py",
+      "frontend/app/lib/api.ts"
+    ]
+  },
+  "data_flow": {
+    "start_session": "POST /api/start → run_until_interrupt → roadmap_review interrupt → return roadmap",
+    "edit_roadmap": "POST /api/roadmap/edit → inject_state(user_action) → resume_until_interrupt → if confirm: auto-run to quiz_permission interrupt",
+    "next_lesson": "POST /api/next → inject quiz_permission=False → resume → challenge_prompt → auto-decline → progress → next lesson",
+    "start_quiz": "POST /api/quiz/start → inject quiz_permission=True → resume → quiz_answer interrupt → return questions",
+    "submit_quiz": "POST /api/quiz/submit → inject user_answers → resume → evaluate_quiz → challenge_prompt interrupt → return score/feedback",
+    "handle_challenge": "POST /api/challenge → inject challenge_accepted → resume_capturing_nodes → project_node (if accepted) → progress_node → return project + next lesson data"
+  }
+}
